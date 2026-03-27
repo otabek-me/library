@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="favorites-container">
+    <div class="favorites-header">
+        <h1 class="page-title">Mening sevimli kitoblarim</h1>
+        <p class="favorites-count">{{ favourite_books.count }} ta kitob saqlangan</p>
+        <div class="divider"></div>
+    </div>
+
+    <div class="books-grid">
+        {% for book in favourite_books %}
+        <div class="book-card-mini">
+            <div class="card-image">
+                {% if book.image %}
+                    <img src="{{ book.image.url }}" alt="{{ book.name }}">
+                {% else %}
+                    <div class="no-image">Rasm yo'q</div>
+                {% endif %}
+                <div class="card-overlay">
+                    <form method="post" action="{% url 'create_favourite_book' book.pk %}">
+                        {% csrf_token %}
+                        <button type="submit" class="remove-fav" title="Sevimlilardan o'chirish">
+                            <i class="fas fa-heart-broken"></i>
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <div class="card-info">
+                <h3 class="book-name">{{ book.name }}</h3>
+                <p class="book-author">{{ book.author }}</p>
+                <div class="card-footer">
+                    <a href="{% url 'book-detail' book.pk %}" class="btn-read">
+                        <i class="fas fa-book-open"></i> O'qish
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="empty-favorites">
+            <div class="empty-icon">
+                <i class="far fa-heart"></i>
+            </div>
+            <h2>Sevimli kitoblar hali yo'q</h2>
+            <p>O'zingizga yoqqan kitoblarni ushbu ro'yxatga qo'shishingiz mumkin.</p>
+            <a href="{% url 'book-list' %}" class="btn-browse">Kitoblarni ko'rish</a>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<link rel="stylesheet" href="{% static 'app1/css/favorites.css' %}">
+{% endblock content %}

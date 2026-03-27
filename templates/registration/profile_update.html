@@ -1,7 +1,41 @@
 {% extends 'base.html' %}
+{% load static %}
+
 {% block content %}
-    <form method="post">{% csrf_token %}
-        {{ form.as_p }}
-    <button type="submit">Saqlash</button>
-    </form>
+<div class="update-wrapper">
+    <div class="update-card">
+        <div class="update-header">
+            <div class="header-icon">
+                <i class="fas fa-user-cog"></i>
+            </div>
+            <h2>Ma'lumotlarni tahrirlash</h2>
+            <p>Profilingizni yangilang</p>
+        </div>
+
+        <form method="post" class="modern-form">
+            {% csrf_token %}
+
+            {% for field in form %}
+            <div class="form-group">
+                <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                {{ field }}
+                {% if field.errors %}
+                    <span class="error-text">{{ field.errors.0 }}</span>
+                {% endif %}
+            </div>
+            {% endfor %}
+
+            <div class="form-actions">
+                <button type="submit" class="btn-save">
+                    <i class="fas fa-check"></i> O'zgarishlarni saqlash
+                </button>
+                <a href="{% url 'profile' user.pk %}" class="btn-back">
+                    Bekor qilish
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<link rel="stylesheet" href="{% static 'app1/css/profile_update.css' %}">
 {% endblock %}

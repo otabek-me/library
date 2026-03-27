@@ -293,7 +293,7 @@
 /* Password visibility toggle */
 .password-toggle {
   position: absolute;
-  right: 16px;
+  right: 12px;
   top: 50%;
   transform: translateY(-50%);
   background: none;
@@ -303,6 +303,7 @@
   font-size: 18px;
   padding: 4px;
   transition: color 0.3s ease;
+  z-index:10;
 }
 
 .password-toggle:hover {
@@ -343,4 +344,20 @@
 
 @keyframes spin {
   to { transform: rotate(360deg); }
+}
+
+/* register.css uchun */
+@media (max-width: 500px) {
+    .form-container, .auth-wrapper {
+        padding: 20px 10px !important;
+    }
+
+    .form, .auth-card {
+        padding: 25px 20px !important;
+        border-radius: 15px !important;
+    }
+
+    .form-title, .auth-header h2 {
+        font-size: 1.2rem !important;
+    }
 }

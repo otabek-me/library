@@ -1,6 +1,98 @@
 {% extends 'base.html' %}
+{% load static %}
+
 {% block content %}
     <main>
 
+        <link rel="stylesheet" href="{% static 'app1/css/home.css' %}">
+        <section class="hero-section fade-in">
+            <div class="container">
+                <div class="hero-content text-center">
+                    <h1 class="display-3 mb-3" data-aos="fade-up">Elektron Kutubxona</h1>
+                    <p class="lead mb-4" data-aos="fade-up" data-aos-delay="100">
+                        Minglab kitoblarni kashf eting, yuklab oling va bilimingizni boyiting.
+                        Sizning intellektual sayohatingiz shu yerdan boshlanadi.
+                    </p>
+                    <div class="hero-btns" data-aos="fade-up" data-aos-delay="200">
+                        <a href="{% url 'book-list' %}" class="btn btn-primary btn-lg me-3">
+                            <i class="fas fa-book-reader"></i> Kitoblarni ko'rish
+                        </a>
+                        {% if user.is_staff %}
+                            <a href="{% url 'book-create' %}" class="btn btn-outline-light btn-lg">
+                                <i class="fas fa-plus"></i> Kitob qo'shish
+                            </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+        </section>
+
+        <section class="stats-section py-5">
+            <div class="container">
+                <div class="row text-center">
+                    <div class="col-md-4 mb-4" data-aos="zoom-in">
+                        <div class="stat-card">
+                            <i class="fas fa-users fa-3x mb-3 text-primary"></i>
+                            <h2 class="counter">500+</h2>
+                            <p>Faol foydalanuvchilar</p>
+                        </div>
+                    </div>
+                    <div class="col-md-4 mb-4" data-aos="zoom-in" data-aos-delay="100">
+                        <div class="stat-card">
+                            <i class="fas fa-atlas fa-3x mb-3 text-primary"></i>
+                            <h2 class="counter">1200+</h2>
+                            <p>Jami kitoblar</p>
+                        </div>
+                    </div>
+                    <div class="col-md-4 mb-4" data-aos="zoom-in" data-aos-delay="200">
+                        <div class="stat-card">
+                            <i class="fas fa-download fa-3x mb-3 text-primary"></i>
+                            <h2 class="counter">8000+</h2>
+                            <p>Yuklab olishlar</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="featured-books py-5 bg-light">
+    <div class="container">
+        <div class="section-header d-flex justify-content-between align-items-end mb-4">
+            <div>
+                <h2 class="mb-1">Yangi qo'shilganlar</h2>
+                <p class="text-muted">Eng so'nggi adabiyotlar to'plami</p>
+            </div>
+            <a href="{% url 'book-list' %}" class="btn btn-link text-decoration-none">Hammasini ko'rish <i class="fas fa-arrow-right"></i></a>
+        </div>
+
+        <div class="row">
+            {% for book in latest_books %}
+            <div class="col-lg-3 col-md-4 col-sm-6 mb-4" data-aos="fade-up" data-aos-delay="{{ forloop.counter }}00">
+                <div class="card h-100 book-card shadow-sm border-0">
+                    <div class="position-relative overflow-hidden">
+                        {% if book.image %}
+                            <img src="{{ book.image.url }}" class="card-img-top" alt="{{ book.title }}">
+                        {% else %}
+                            <img src="{% static 'images/default-book.png' %}" class="card-img-top" alt="Default Image">
+                        {% endif %}
+                        <div class="book-overlay">
+                            <a href="{% url 'book-detail' book.pk %}" class="btn btn-light btn-sm">Batafsil</a>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <h5 class="card-title text-truncate">{{ book.title }}</h5>
+                        <p class="card-text text-muted small">{{ book.author }}</p>
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <div class="col-12 text-center py-5">
+                <p class="text-muted">Hozircha kitoblar mavjud emas.</p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
     </main>
 {% endblock content %}

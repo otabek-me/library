@@ -3,13 +3,22 @@ document.addEventListener('DOMContentLoaded', function() {
     // Password toggle functionality
     document.querySelectorAll('.password-toggle').forEach(toggle => {
         toggle.addEventListener('click', function() {
-            const input = this.parentElement.querySelector('.password-input');
-            const type = input.getAttribute('type') === 'password' ? 'text' : 'password';
-            input.setAttribute('type', type);
-            this.textContent = type === 'password' ? '👁' : '🔒';
+            // 'this.parentElement' - bu sizning <label> elementingiz
+            // Uning ichidan '.input' klassiga ega elementni qidiramiz
+            const input = this.parentElement.querySelector('.input');
+
+            if (input) {
+                const type = input.getAttribute('type') === 'password' ? 'text' : 'password';
+                input.setAttribute('type', type);
+
+                // Belgini almashtirish
+                this.textContent = type === 'password' ? '👁' : '🔒';
+
+                // Fokusni inputda saqlab qolish
+                input.focus();
+            }
         });
     });
-
     // Fix for autofilled inputs on page load
     setTimeout(() => {
         document.querySelectorAll('.input').forEach(input => {

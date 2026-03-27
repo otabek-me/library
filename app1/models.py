@@ -4,6 +4,7 @@ from PIL import Image
 from django.core.files.base import ContentFile
 from django.core.validators import FileExtensionValidator, MinValueValidator, MaxValueValidator
 from accaunts.models import CustomUser
+from django.db.models import Avg
 
 
 class Category(models.Model):
@@ -20,9 +21,9 @@ class Book(models.Model):
     author = models.CharField(max_length=100)
     image = models.ImageField(upload_to='books/images/', validators=[FileExtensionValidator(allowed_extensions=['jpg', 'png', 'jpeg', 'bmp'])])
     book_file = models.FileField(upload_to='books/files/', validators=[FileExtensionValidator(allowed_extensions=['pdf', 'doc', 'docx', 'txt'])])
-    creator = models.ForeignKey(CustomUser, on_delete=models.CASCADE, null=True, blank=True)
+    creator = models.ForeignKey(CustomUser, on_delete=models.PROTECT, null=True, blank=True)
     likes = models.ManyToManyField(CustomUser, blank=True, related_name='likes')
-    favorites = models.BooleanField(default=False)
+    favourites = models.ManyToManyField(CustomUser, blank=True, related_name='favourites')
 
     def save(self, *args, **kwargs):
         img = Image.open(self.image)
@@ -42,6 +43,10 @@ class Book(models.Model):
             models.Index(fields=['name']),
             models.Index(fields=['name', 'author']),
         ]
+    @property
+    def avg_rating(self):
+        result = self.ratings.aggregate(Avg('stars'))['stars__avg']
+        return result
 
 class Comment(models.Model):
     book = models.ForeignKey(Book, on_delete=models.CASCADE, related_name='comments')
@@ -67,3 +72,4 @@ class Rating(models.Model):
 
     def __str__(self):
         return f"{self.user.first_name} - {self.stars} stars"
+

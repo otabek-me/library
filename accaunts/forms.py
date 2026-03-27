@@ -81,3 +81,7 @@ class UpdateProfileForm(forms.ModelForm):
     class Meta:
         model = CustomUser
         fields = ('first_name', 'last_name')
+        widgets = {
+            'first_name': forms.TextInput(attrs={'placeholder': 'Ismingizni kiriting'}),
+            'last_name': forms.TextInput(attrs={'placeholder': 'Familiyangizni kiriting'}),
+        }

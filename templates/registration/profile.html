@@ -1,17 +1,59 @@
 {% extends 'base.html' %}
+{% load static %}
 
 {% block content %}
-<div class="container">
-    <h2>Sizning profilingiz</h2>
-    <hr>
-    <p><strong>Ism:</strong> {{ user.first_name|default:"Kiritilmagan" }}</p>
-    <p><strong>Familiya:</strong> {{ user.last_name|default:"Kiritilmagan" }}</p>
-    <p><strong>Elektron pochta:</strong> {{ user.email }}</p>
-    <p><strong>Ro'yxatdan o'tilgan sana:</strong> {{ user.date_joined|date:"d-m-Y h:i" }}</p>
+<div class="profile-wrapper">
+    <div class="profile-card">
+        <div class="profile-header">
+            <div class="user-big-avatar">
+                {% if user.first_name %}
+                    {{ user.first_name|first|upper }}{{ user.last_name|first|upper }}
+                {% else %}
+                    <i class="fas fa-user"></i>
+                {% endif %}
+            </div>
+            <h2 class="user-display-name">
+                {{ user.get_full_name|default:user.username }}
+            </h2>
+            <span class="user-status-badge">Foydalanuvchi</span>
+        </div>
 
-    <div class="mt-4">
-        <a href="{% url 'profile-update'  %}" class="btn btn-primary">Ma'lumotlarni tahrirlash</a>
-        <a href="{% url 'password-change' %}" class="btn btn-secondary">Parolni yangilash</a>
+        <div class="profile-body">
+            <div class="info-row">
+                <div class="info-icon"><i class="fas fa-id-card"></i></div>
+                <div class="info-content">
+                    <label>Ism va Familiya</label>
+                    <p>{{ user.first_name|default:"Kiritilmagan" }} {{ user.last_name }}</p>
+                </div>
+            </div>
+
+            <div class="info-row">
+                <div class="info-icon"><i class="fas fa-envelope"></i></div>
+                <div class="info-content">
+                    <label>Elektron pochta</label>
+                    <p>{{ user.email }}</p>
+                </div>
+            </div>
+
+            <div class="info-row">
+                <div class="info-icon"><i class="fas fa-calendar-alt"></i></div>
+                <div class="info-content">
+                    <label>A'zo bo'lingan sana</label>
+                    <p>{{ user.date_joined|date:"d-m-Y" }} <small>{{ user.date_joined|time:"H:i" }}</small></p>
+                </div>
+            </div>
+        </div>
+
+        <div class="profile-actions">
+            <a href="{% url 'profile-update' %}" class="btn-edit">
+                <i class="fas fa-user-edit"></i> Tahrirlash
+            </a>
+            <a href="{% url 'password-change' %}" class="btn-password">
+                <i class="fas fa-lock"></i> Parolni yangilash
+            </a>
+        </div>
     </div>
 </div>
+
+<link rel="stylesheet" href="{% static 'app1/css/profile.css' %}">
 {% endblock %}

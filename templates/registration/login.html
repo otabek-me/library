@@ -1,6 +1,7 @@
 {% extends 'base.html' %}
-
+{% load static %}
 {% block content %}
+<script src="{% static 'app1/js/login.js' %}"></script>
 <div class="form-container">
     <form class="form" method="post" id="loginForm">{% csrf_token %}
         <p class="title">Kirish</p>
@@ -12,7 +13,7 @@
         </label>
 
         <label>
-            <input required placeholder=" " name="password" type="password" class="input" autocomplete="new-password">
+            <input required placeholder=" " name="password" type="password" class="input password-input" autocomplete="new-password">
             <span>Parol</span>
             <button type="button" class="password-toggle">👁</button>
         </label>

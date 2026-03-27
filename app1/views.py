@@ -1,19 +1,31 @@
 from django.http import JsonResponse
 from django.shortcuts import redirect
 from django.urls import reverse_lazy
-from django.views.generic import ListView, DetailView, CreateView, View, DeleteView
+from django.views.generic import ListView, DetailView, CreateView, View, DeleteView, TemplateView
 from django.views.generic.edit import FormMixin
 from .forms import BookCreateForm, CommentForm
 from app1.models import Book, Category, Rating, Comment
 from django.db.models import Q, Avg, Count
 from django.shortcuts import get_object_or_404
+from accaunts.models import CustomUser
 
+class HomePageView(TemplateView):
+    template_name = 'home.html'
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['latest_books'] = Book.objects.order_by('-id')[:4]
+        return context
+
+    def get_queryset(self):
+        query = self.request.GET.get('search')
+        result = Book.objects.filter(Q(name__icontains=query) | Q(author__icontains=query))
+        return result
 
 class BookListView(ListView):
     model = Book
-    context_object_name = 'book_list'
+    context_object_name = 'books'
     template_name = 'app1/book_list.html'
-    paginate_by = 10
+    paginate_by = 3
 
     def get_queryset(self):
         query = self.request.GET.get('q')
@@ -23,14 +35,16 @@ class BookListView(ListView):
         if category_id:
             result = result.filter(category__id=category_id)
         if query:
-            result = result.filter(Q(name__icontains=query) | Q(result.filter(author__icontains=query)))
+            result = result.filter(Q(name__icontains=query) | Q(author__icontains=query))
 
         return result
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['category'] = Category.objects.all()
+        context['categories'] = Category.objects.all()
         context['avg_rating'] = Rating.objects.aggregate(Avg('stars'))['stars__avg'] or 0
+        context['user_count'] = CustomUser.objects.count()
+        # context['book_rating'] =
 
         return context
 
@@ -129,3 +143,22 @@ class BookLikeView(View):
             'likes_count': book.likes.count(),
             'book_id': book.pk
         })
+
+class FavouriteBookView(ListView):
+    model = Book
+    template_name = 'app1/favourite_books.html'
+    context_object_name = 'favourite_books'
+
+    def get_queryset(self):
+        print(self.request.user.favourites.all())
+        return self.request.user.favourites.all()
+
+def create_favourite_book(request, pk):
+    book = get_object_or_404(Book, pk=pk)
+    if request.user.is_authenticated:
+        if request.method == 'POST':
+            if book.favourites.filter(id=request.user.id).exists():
+                book.favourites.remove(request.user)
+            else:
+                book.favourites.add(request.user)
+    return redirect('book-detail', pk=pk)

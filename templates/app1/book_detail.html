@@ -1,6 +1,7 @@
 {% extends 'base.html' %}
 {% load static %}
 {% block content %}
+    <link rel="stylesheet" href="{% static 'app1/css/book_detail.css' %}">
     <div class="book-detail-container">
         <!-- Sahifa sarlavhasi -->
         <div class="page-header">
@@ -22,11 +23,18 @@
 
                     <!-- Kitob harakatlari (actions) -->
                     <div class="book-actions">
-                        <form method="post">{% csrf_token %}
-                            <button type="submit" name="submit_favorites" class="btn-action btn-favorite" id="add-to-favorites">
-                                <i class="fas fa-heart"></i> Sevimlilar
+                        <form method="post" action="{% url 'create_favourite_book' book.pk %}">{% csrf_token %}
+                            <button type="submit" class="btn-action btn-favorite">
+                                {% if request.user in book.favourites.all %}
+                                    Sevimlilardan chiqarish
+                                {% else %}
+                                    Sevimlilarga qo'shish
+                                {% endif %}
                             </button>
                         </form>
+                        <a href="{% url 'favourites' %}" class="btn">
+                            Sevimlilar
+                        </a>
                         <button class="btn-action btn-share" id="share-book">
                             <i class="fas fa-share-alt"></i> Ulashish
                         </button>
@@ -47,27 +55,23 @@
                         </div>
 
                         <!-- Reyting -->
-<div class="book-rating">
-    <form action="{% url 'book-detail' book.id %}" method="post">
+                    <div class="book-rating-box">
+    <form id="rating-form" action="{% url 'book-detail' book.id %}" method="post">
         {% csrf_token %}
-            <div class="stars-input">
-                {% for i in "54321" %}
-                    <input type="radio" name="stars" value="{{ i }}" id="st{{ i }}"
-                           {% if user_ratings|slugify == i %}checked{% endif %}>
-                    <label for="st{{ i }}"><i class="fas fa-star"></i></label>
-                {% endfor %}
-            </div>
-
-        <span class="rating-text">
-            {{ avg_rating|floatformat:1 }} ({{ rating_count }} ta baho)
-        </span>
-
-        <button type="submit" name="submit_rating" class="btn-rate">
-            Reytingni saqlash
-        </button>
+        <input type="hidden" name="submit_rating" value="1"> <div class="stars-input">
+            {% for i in "54321" %}
+                <input type="radio" name="stars" value="{{ i }}" id="st{{ i }}"
+                       {% if user_ratings|slugify == i %}checked{% endif %}
+                       onchange="document.getElementById('rating-form').submit();">
+                <label for="st{{ i }}"><i class="fas fa-star"></i></label>
+            {% endfor %}
+        </div>
+        <div class="rating-info">
+            <span class="avg-num">{{ avg_rating|floatformat:1 }}</span>
+            <span class="count-text">({{ rating_count }} ta baho)</span>
+        </div>
     </form>
-</div>
-                    </div>
+</div>                    </div>
 
                     <!-- Kitob xususiyatlari -->
                     <div class="book-features">
@@ -155,7 +159,7 @@
                                 </span>
                             </div>
                         </div>
-                        {% if user == comment.author %}
+                        {% if user == comment.author or user.is_staff %}
                             <div class="comment-meta">
                                 <form action="{%url 'comment_delete' comment.pk %}" method="post" style="display:inline">{% csrf_token %}
                                     <button aria-label="Delete item" class="delete-button" onclick="return confirm('Rostan ham o\'chirmoqchimisiz?')">
