@@ -2,7 +2,7 @@
 {% load static %}
 
 {% block content %}
-    <main>
+    <main class="home-page">
 
         <link rel="stylesheet" href="{% static 'app1/css/home.css' %}">
         <section class="hero-section fade-in">
@@ -56,43 +56,69 @@
             </div>
         </section>
 
-        <section class="featured-books py-5 bg-light">
+<section class="featured-books py-5">
     <div class="container">
         <div class="section-header d-flex justify-content-between align-items-end mb-4">
             <div>
-                <h2 class="mb-1">Yangi qo'shilganlar</h2>
+                <h2 class="mb-1" style="font-weight: 800;">Yangi qo'shilganlar</h2>
                 <p class="text-muted">Eng so'nggi adabiyotlar to'plami</p>
             </div>
-            <a href="{% url 'book-list' %}" class="btn btn-link text-decoration-none">Hammasini ko'rish <i class="fas fa-arrow-right"></i></a>
+            <a href="{% url 'book-list' %}" class="btn btn-link text-decoration-none" style="font-weight: 600; color: #4f46e5;">
+                Hammasini ko'rish <i class="fas fa-arrow-right ms-1"></i>
+            </a>
         </div>
 
-        <div class="row">
+        <div class="books-container grid-view">
             {% for book in latest_books %}
-            <div class="col-lg-3 col-md-4 col-sm-6 mb-4" data-aos="fade-up" data-aos-delay="{{ forloop.counter }}00">
-                <div class="card h-100 book-card shadow-sm border-0">
-                    <div class="position-relative overflow-hidden">
-                        {% if book.image %}
-                            <img src="{{ book.image.url }}" class="card-img-top" alt="{{ book.title }}">
-                        {% else %}
-                            <img src="{% static 'images/default-book.png' %}" class="card-img-top" alt="Default Image">
-                        {% endif %}
-                        <div class="book-overlay">
-                            <a href="{% url 'book-detail' book.pk %}" class="btn btn-light btn-sm">Batafsil</a>
+                <article class="book-card" data-aos="fade-up" data-aos-delay="{{ forloop.counter0 }}00">
+                    <a href="{% url 'book-detail' book.id %}" class="book-cover-link">
+                        <div class="book-image-wrapper">
+                            {% if book.image %}
+                                <img src="{{ book.image.url }}" alt="{{ book.title }}">
+                            {% else %}
+                                <div class="no-image-placeholder d-flex align-items-center justify-content-center bg-light" style="height: 100%;">
+                                    <i class="fas fa-book-open fa-2x text-muted"></i>
+                                </div>
+                            {% endif %}
+                            <div class="book-overlay">
+                                <span class="read-more">Batafsil <i class="fas fa-arrow-right"></i></span>
+                            </div>
                         </div>
+                    </a>
+
+                    <div class="book-info">
+                        <div class="book-meta">
+                            <span class="book-category">{{ book.category.name }}</span>
+                            <div class="book-rating">
+                                <i class="fas fa-star"></i>{{ book.avg_rating|default:"0.0" }}
+                            </div>
+                        </div>
+
+                        <h3 class="book-title">
+                            <a href="{% url 'book-detail' book.id %}">{{ book.title }}</a>
+                        </h3>
+                        <p class="book-author"><i class="fas fa-pen-nib"></i> {{ book.author }}</p>
+
+                        <p class="book-description-excerpt">{{ book.description|truncatechars:70 }}</p>
+
+                        {% if user.is_staff %}
+                            <div class="book-actions">
+                                <a href="#" class="btn-icon btn-edit" title="Tahrirlash">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                                <a href="#" class="btn-icon btn-delete" title="O'chirish">
+                                    <i class="fas fa-trash-alt"></i>
+                                </a>
+                            </div>
+                        {% endif %}
                     </div>
-                    <div class="card-body">
-                        <h5 class="card-title text-truncate">{{ book.title }}</h5>
-                        <p class="card-text text-muted small">{{ book.author }}</p>
-                    </div>
-                </div>
-            </div>
+                </article>
             {% empty %}
-            <div class="col-12 text-center py-5">
-                <p class="text-muted">Hozircha kitoblar mavjud emas.</p>
-            </div>
+                <div class="col-12 text-center py-5">
+                    <p class="text-muted">Hozircha kitoblar mavjud emas.</p>
+                </div>
             {% endfor %}
         </div>
     </div>
-</section>
-    </main>
+</section>    </main>
 {% endblock content %}

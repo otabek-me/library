@@ -95,7 +95,7 @@
                             </h3>
                             <p class="book-author"><i class="fas fa-pen-nib"></i> {{ book.author }}</p>
 
-                            <p class="book-description-excerpt">{{ book.description|truncatechars:120 }}</p>
+                            <p class="book-description-excerpt">{{ book.description|truncatechars:70 }}</p>
 
                             {% if user.is_staff %}
                                 <div class="book-actions">
@@ -173,4 +173,5 @@
         </div>
     </section>
 </main>
+<script src="{% static 'app1/js/book_list.js' %}"></script>
 {% endblock content %}

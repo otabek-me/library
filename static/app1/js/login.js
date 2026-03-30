@@ -3,18 +3,18 @@ document.addEventListener('DOMContentLoaded', function() {
     // Password toggle functionality
     document.querySelectorAll('.password-toggle').forEach(toggle => {
         toggle.addEventListener('click', function() {
-            // 'this.parentElement' - bu sizning <label> elementingiz
-            // Uning ichidan '.input' klassiga ega elementni qidiramiz
             const input = this.parentElement.querySelector('.input');
+            const icon = this.querySelector('i');
 
             if (input) {
                 const type = input.getAttribute('type') === 'password' ? 'text' : 'password';
                 input.setAttribute('type', type);
+                this.classList.toggle('is-visible', type === 'text');
+                if (icon) {
+                    icon.classList.toggle('fa-eye', type === 'password');
+                    icon.classList.toggle('fa-eye-slash', type === 'text');
+                }
 
-                // Belgini almashtirish
-                this.textContent = type === 'password' ? '👁' : '🔒';
-
-                // Fokusni inputda saqlab qolish
                 input.focus();
             }
         });

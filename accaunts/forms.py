@@ -3,6 +3,10 @@ from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from accaunts.models import CustomUser
 
 class CustomUserCreateForm(UserCreationForm):
+    error_messages = {
+        'password_mismatch': "Parollar bir-biriga mos emas.",
+    }
+
     class Meta:
         model = CustomUser
         fields = ('email', 'first_name', 'last_name')
@@ -21,6 +25,9 @@ class CustomUserCreateForm(UserCreationForm):
 
     first_name = forms.CharField(
         label='Ism',
+        error_messages={
+            'required': "Ismni kiritish majburiy.",
+        },
         widget=forms.TextInput(attrs={
             'class': 'input',
             'placeholder': 'First Name',
@@ -28,6 +35,9 @@ class CustomUserCreateForm(UserCreationForm):
     )
     last_name = forms.CharField(
         label='Familiya',
+        error_messages={
+            'required': "Familiyani kiritish majburiy.",
+        },
         widget=forms.TextInput(attrs={
             'class': 'input',
             'placeholder': 'Last Name',
@@ -35,6 +45,10 @@ class CustomUserCreateForm(UserCreationForm):
     )
     email = forms.EmailField(
         label='Elektron pochta',
+        error_messages={
+            'required': "Email manzilni kiritish majburiy.",
+            'invalid': "To'g'ri email manzil kiriting.",
+        },
         widget=forms.EmailInput(attrs={
             'class': 'input',
             'placeholder': 'Email',
@@ -43,6 +57,9 @@ class CustomUserCreateForm(UserCreationForm):
     )
     password1 = forms.CharField(
         label='Parol',
+        error_messages={
+            'required': "Parolni kiritish majburiy.",
+        },
         widget=forms.PasswordInput(attrs={
             'class': 'input',
             'placeholder': 'Password',
@@ -51,6 +68,9 @@ class CustomUserCreateForm(UserCreationForm):
     )
     password2 = forms.CharField(
         label='Parolni takrorlang',
+        error_messages={
+            'required': "Parolni takroran kiritish majburiy.",
+        },
         widget=forms.PasswordInput(attrs={
             'class': 'input',
             'placeholder': 'Repeat Password',
@@ -59,9 +79,17 @@ class CustomUserCreateForm(UserCreationForm):
     )
 
 class LoginForm(AuthenticationForm):
+    error_messages = {
+        'invalid_login': "Email yoki parol noto'g'ri.",
+        'inactive': "Bu foydalanuvchi faol emas.",
+    }
 
     username = forms.EmailField(
         label='Elektron pochta',
+        error_messages={
+            'required': "Email manzilni kiritish majburiy.",
+            'invalid': "To'g'ri email manzil kiriting.",
+        },
         widget = forms.EmailInput(attrs={
             'class': 'form-control',
             'placeholder': 'Elektron pochta kiriting',
@@ -70,6 +98,9 @@ class LoginForm(AuthenticationForm):
     )
     password = forms.CharField(
         label='Parol',
+        error_messages={
+            'required': "Parolni kiritish majburiy.",
+        },
         widget = forms.PasswordInput(attrs={
             'class': 'form-control',
             'placeholder': 'Parol',

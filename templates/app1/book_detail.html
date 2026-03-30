@@ -15,7 +15,11 @@
                 <!-- Kitob rasmi -->
                 <div class="book-image-section">
                     <div class="book-image-container">
-                        <img src="{{ book.image.url }}" alt="{{ book.name }}" class="book-image">
+                        {% if book.image %}
+                            <img src="{{ book.image.url }}" alt="{{ book.name }}" class="book-image">
+                        {% else %}
+                            <img src="{% static 'images/default-book.png' %}" alt="{{ book.name }}" class="book-image">
+                        {% endif %}
                         <div class="book-image-overlay">
                             <span class="book-badge">Ko'rilmoqda</span>
                         </div>
@@ -55,23 +59,25 @@
                         </div>
 
                         <!-- Reyting -->
-                    <div class="book-rating-box">
-    <form id="rating-form" action="{% url 'book-detail' book.id %}" method="post">
-        {% csrf_token %}
-        <input type="hidden" name="submit_rating" value="1"> <div class="stars-input">
-            {% for i in "54321" %}
-                <input type="radio" name="stars" value="{{ i }}" id="st{{ i }}"
-                       {% if user_ratings|slugify == i %}checked{% endif %}
-                       onchange="document.getElementById('rating-form').submit();">
-                <label for="st{{ i }}"><i class="fas fa-star"></i></label>
-            {% endfor %}
-        </div>
-        <div class="rating-info">
-            <span class="avg-num">{{ avg_rating|floatformat:1 }}</span>
-            <span class="count-text">({{ rating_count }} ta baho)</span>
-        </div>
-    </form>
-</div>                    </div>
+                        <div class="book-rating-box">
+                            <form id="rating-form" action="{% url 'book-detail' book.id %}" method="post">
+                                {% csrf_token %}
+                                <input type="hidden" name="submit_rating" value="1">
+                                <div class="stars-input">
+                                    {% for i in "54321" %}
+                                        <input type="radio" name="stars" value="{{ i }}" id="st{{ i }}"
+                                               {% if user_ratings|slugify == i %}checked{% endif %}
+                                               onchange="document.getElementById('rating-form').submit();">
+                                        <label for="st{{ i }}"><i class="fas fa-star"></i></label>
+                                    {% endfor %}
+                                </div>
+                                <div class="rating-info">
+                                    <span class="avg-num">{{ avg_rating|floatformat:1 }}</span>
+                                    <span class="count-text">({{ rating_count }} ta baho)</span>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
 
                     <!-- Kitob xususiyatlari -->
                     <div class="book-features">
@@ -85,7 +91,7 @@
                         </div>
                         <div class="feature">
                             <i class="fas fa-tag"></i>
-                            <span id="book-category">Fantastika</span>
+                            <span id="book-category">{{ book.category.name }}</span>
                         </div>
                         <div class="feature">
                             <i class="fas fa-language"></i>
